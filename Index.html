@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Type Ahead 👀</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <form class="search-form">
+    <input type="text" class="search" placeholder="City or State">
+    <ul class="suggestions">
+      <li>Filter for a city</li>
+     <li>or a state</li>
+    </ul>
+  </form>
+<script>
+    let  cities=[];
+const endpoint = 'https://gist.githubusercontent.com/tdreyno/4278655/raw/7b0762c09b519f40397e4c3e100b097d861f5588/airports.json';
+    fetch(endpoint)
+    .then(blob=>blob.json())
+    .then(a=>{
+    cities=a;
+    console.log(cities);
+});
+function fmatch(wordmatch,cities){
+return cities.filter(place=>{
+const reg= new RegExp(wordmatch,'gi');
+return place.name.match(reg);
+
+});
+};
+
+function  displayR(){
+const ac= fmatch(this.value,cities);
+
+const html =ac.map(place=>{
+    const regex= new RegExp(this.value,'gi');
+const name=place.name.replace(regex,`<span class="hl">${this.value}</span>`);  
+return `
+<li>
+<span >${name}</span>
+<span >${place.code}</span>
+<li>
+`
+}).join('');
+suggest.innerHTML=html;
+};
+const search = document.querySelector('.search');
+const suggest=document.querySelector('.suggestions');
+search.addEventListener('keyup',displayR);
+search.addEventListener('change',displayR);
+
+
+</script>
+  </body>
+</html>
